@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Menu bar only, from launch (CONTEXT.md 常驻形态); main.rs also sets Accessory at runtime. -->
+  <key>LSUIElement</key>
+  <true/>
+  <key>NSScreenCaptureUsageDescription</key>
+  <string>点拨需要屏幕录制权限，才能框选识别屏幕上的文字。文字只在本机用 Vision 识别，不会上传原图。</string>
+</dict>
+</plist>

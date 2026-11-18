@@ -1,0 +1,222 @@
+@import "tailwindcss" source(none);
+@import "tw-animate-css";
+
+/* The overlay has its own hand-written styles; Tailwind is scoped to the settings window. */
+@source "../settings";
+@source "../components";
+
+/* Class-based: applyTheme() sets .dark / .light on <html> (system resolves first). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  /* Darker muted so xs copy on sidebar/chips clears WCAG AA (~4.5+). */
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.955 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.55 0.22 27);
+  /* Darkened for light-mode text-success AA (was ~3.5). */
+  --success: oklch(0.45 0.13 150);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  /* Stronger default ring so /70–/80 focus rings stay visible. */
+  --ring: oklch(0.55 0 0);
+  --sidebar: oklch(0.965 0 0);
+  --disabled-foreground: oklch(0.7 0 0);
+}
+
+/* Forced / resolved theme via applyTheme() on <html>. */
+.dark {
+  --background: oklch(0.17 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.235 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --success: oklch(0.72 0.17 150);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --disabled-foreground: oklch(0.55 0 0);
+}
+
+.light {
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  /* Darker muted so xs copy on sidebar/chips clears WCAG AA (~4.5+). */
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.955 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.55 0.22 27);
+  /* Darkened for light-mode text-success AA (was ~3.5). */
+  --success: oklch(0.45 0.13 150);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  /* Stronger default ring so /70–/80 focus rings stay visible. */
+  --ring: oklch(0.55 0 0);
+  --sidebar: oklch(0.965 0 0);
+  --disabled-foreground: oklch(0.7 0 0);
+}
+
+/* Before JS runs: follow the OS unless a forced class is already present. */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) {
+    --background: oklch(0.17 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.235 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.72 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --success: oklch(0.72 0.17 150);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.72 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --disabled-foreground: oklch(0.55 0 0);
+  }
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-disabled-foreground: var(--disabled-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", "Microsoft YaHei", "Noto Sans CJK SC", system-ui,
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/80;
+  }
+  html,
+  body,
+  #root {
+    @apply h-full overflow-hidden bg-background text-foreground;
+  }
+  body {
+    @apply font-sans text-[13px] antialiased;
+  }
+}
+
+/* Motion helpers. Only height, opacity, colors and box-shadow animate: never transforms on text. */
+/* Recording a shortcut: a soft ring breathes around the box. */
+.shortcut-recording {
+  animation: recording-ring 1.6s ease-in-out infinite;
+}
+@keyframes recording-ring {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--primary) 0%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 18%, transparent);
+  }
+}
+
+/* A row that was just added flashes its background once. */
+.just-added {
+  animation: just-added 1.2s ease-out;
+}
+@keyframes just-added {
+  from {
+    background-color: color-mix(in oklch, var(--success) 18%, transparent);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shortcut-recording,
+  .just-added {
+    animation: none;
+  }
+}
+
+/* Settings Toggle: interruptible CSS transition (no keyframe restart on rapid clicks). */
+.t-toggle {
+  --toggle-travel: 14px;
+  --toggle-track: 120ms;
+  --toggle-thumb: 200ms;
+  --toggle-ease: cubic-bezier(0.34, 1.2, 0.64, 1);
+  transition: background-color var(--toggle-track) ease;
+}
+.t-toggle[data-size="sm"] {
+  --toggle-travel: 10px;
+}
+.t-toggle-thumb {
+  translate: 0 0;
+  transition: translate var(--toggle-thumb) var(--toggle-ease);
+  will-change: translate;
+}
+.t-toggle[data-checked] .t-toggle-thumb {
+  translate: var(--toggle-travel) 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-toggle-thumb {
+    transition: none;
+  }
+}

@@ -1,0 +1,13 @@
+<!-- Windows notification-area icon: the app tile (the light-theme bubble), cropped to fill the 16/32px
+     cell. A dark rim keeps the light tile's edge visible on a light taskbar. Rendered by scripts/tray-icons.mjs. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="86 86 852 852">
+  <defs>
+    <mask id="cut">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <circle cx="632" cy="608" r="150" fill="#000"/>
+    </mask>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#fcfcfd" stroke="#000" stroke-opacity="0.22" stroke-width="28"/>
+  <rect x="260" y="344" width="420" height="228" rx="66" fill="#aed6fe" mask="url(#cut)"/>
+  <circle cx="632" cy="608" r="102" fill="#0a84ff"/>
+</svg>

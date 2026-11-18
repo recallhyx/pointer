@@ -1,0 +1,23 @@
+[
+  { "id": "com.1password.1password", "name": "1Password", "platform": "macos" },
+  { "id": "com.agilebits.onepassword7", "name": "1Password 7", "platform": "macos" },
+  { "id": "com.bitwarden.desktop", "name": "Bitwarden", "platform": "macos" },
+  { "id": "com.apple.Passwords", "name": "密码", "platform": "macos" },
+  { "id": "com.apple.keychainaccess", "name": "钥匙串访问", "platform": "macos" },
+  { "id": "com.apple.Terminal", "name": "终端", "platform": "macos" },
+  { "id": "com.googlecode.iterm2", "name": "iTerm2", "platform": "macos" },
+  { "id": "dev.warp.Warp-Stable", "name": "Warp", "platform": "macos" },
+  { "id": "com.mitchellh.ghostty", "name": "Ghostty", "platform": "macos" },
+  { "id": "net.kovidgoyal.kitty", "name": "kitty", "platform": "macos" },
+  { "id": "com.microsoft.rdc.macos", "name": "Windows App（远程桌面）", "platform": "macos" },
+  { "id": "1Password.exe", "name": "1Password", "platform": "windows" },
+  { "id": "Bitwarden.exe", "name": "Bitwarden", "platform": "windows" },
+  { "id": "KeePass.exe", "name": "KeePass", "platform": "windows" },
+  { "id": "KeePassXC.exe", "name": "KeePassXC", "platform": "windows" },
+  { "id": "WindowsTerminal.exe", "name": "Windows 终端", "platform": "windows" },
+  { "id": "cmd.exe", "name": "命令提示符", "platform": "windows" },
+  { "id": "powershell.exe", "name": "Windows PowerShell", "platform": "windows" },
+  { "id": "pwsh.exe", "name": "PowerShell", "platform": "windows" },
+  { "id": "mstsc.exe", "name": "远程桌面连接", "platform": "windows" },
+  { "id": "msrdc.exe", "name": "远程桌面客户端", "platform": "windows" }
+]

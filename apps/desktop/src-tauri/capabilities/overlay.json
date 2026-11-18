@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "overlay",
+  "description": "The overlay window: its own placement, click-through and focus, and detaching a pinned panel",
+  "windows": ["overlay"],
+  "permissions": [
+    "allow-overlay-present",
+    "allow-overlay-set-hit",
+    "allow-overlay-set-frame",
+    "allow-overlay-painted",
+    "allow-overlay-hide",
+    "allow-overlay-engage",
+    "allow-pin-open",
+    "allow-pin-cancel"
+  ]
+}

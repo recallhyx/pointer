@@ -1,0 +1,29 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "settings",
+  "description": "The settings window: providers and keys, shortcuts, autostart, OCR setup, logs",
+  "windows": ["settings"],
+  "permissions": [
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "https://*" }, { "url": "https://*:*" }, { "url": "http://*" }, { "url": "http://*:*" }]
+    },
+    "allow-secret-get",
+    "allow-secret-set",
+    "allow-secret-delete",
+    "allow-set-trigger-shortcut",
+    "allow-pause-trigger-shortcut",
+    "allow-set-ocr-shortcut",
+    "allow-recent-apps",
+    "allow-autostart-enabled",
+    "allow-set-autostart",
+    "allow-ocr-start",
+    "allow-ocr-screen-permission",
+    "allow-ocr-request-screen-permission",
+    "allow-ocr-open-screen-settings",
+    "allow-accessibility-permission",
+    "allow-accessibility-request",
+    "allow-accessibility-open-settings",
+    "allow-open-logs"
+  ]
+}

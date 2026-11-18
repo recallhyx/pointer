@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f3f3f0" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a19" media="(prefers-color-scheme: dark)" />
+    <title>点拨 · 划词即问的 AI 浮层</title>
+    <meta
+      name="description"
+      content="在任何应用里选中文字，旁边浮出一个小圆点，点开就能解释、翻译，答案原地展开。支持 macOS 和 Windows，接入你自己的模型。"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript
+      >点拨是一个划词 AI 工具。这个页面的演示需要 JavaScript。/ Pointer is a select-to-ask AI tool. The demo on this
+      page needs JavaScript.</noscript
+    >
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

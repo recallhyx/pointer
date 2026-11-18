@@ -1,0 +1,4 @@
+# Formatting-only commits, skipped by `git blame` (git config blame.ignoreRevsFile .git-blame-ignore-revs).
+
+# Format the codebase with Prettier and rustfmt
+5385ed9edb3a1e558d6689632c4ad1773dfc08ac

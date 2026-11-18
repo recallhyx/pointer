@@ -1,0 +1,35 @@
+/**
+ * Pointer product site (Cloudflare Worker + Static Assets).
+ * No KV, routes, or secrets until the page needs them.
+ * Local UI: pnpm --filter @pointer/web dev
+ * Asset routing: pnpm --filter @pointer/web build && pnpm --filter @pointer/web preview
+ * Do not deploy until asked.
+ */
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "pointer-web",
+  // Newest date the workerd shipped with wrangler 4.151.0 will boot (it rejects 2026-10-23).
+  "compatibility_date": "2026-10-19",
+  // Default-on for this date; kept explicit so a future Worker script can import Node built-ins.
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Assets-only Worker. Add `main` when a server route is actually needed.
+  "assets": {
+    "directory": "./dist",
+    // One document at `/`. Unknown paths 404 until the page has real routes.
+    "not_found_handling": "none",
+  },
+
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "invocation_logs": true,
+      "head_sampling_rate": 1,
+    },
+    "traces": {
+      "enabled": true,
+      // Scaffold traffic is low; lower sampling later if volume grows.
+      "head_sampling_rate": 1,
+    },
+  },
+}

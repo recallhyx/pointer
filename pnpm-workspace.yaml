@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+
+# pi-ai's unused providers need no install script. lefthook's binary comes from its platform
+# package and the hooks from the root `prepare`, so its postinstall is not needed either.
+ignoredBuiltDependencies:
+  - "@google/genai"
+  - lefthook
+  - protobufjs
+
+# Needed for wrangler / vite native binaries.
+onlyBuiltDependencies:
+  - esbuild
+  - workerd

@@ -1,0 +1,17 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "answer",
+  "description": "Windows that ask the model and show answers: the overlay and pinned panels. Model output is rendered here, so these windows only read keys and get no settings, shortcut or autostart commands.",
+  "windows": ["overlay", "pinned-*"],
+  "permissions": [
+    "clipboard-manager:allow-write-text",
+    "opener:default",
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "https://*" }, { "url": "https://*:*" }, { "url": "http://*" }, { "url": "http://*:*" }]
+    },
+    "allow-secret-get",
+    "allow-open-settings",
+    "allow-ocr-lightbox-open"
+  ]
+}

@@ -1,0 +1,881 @@
+:root {
+  color-scheme: light dark;
+  --surface-bg: rgba(252, 252, 253, 0.98);
+  --surface-border: rgba(0, 0, 0, 0.1);
+  --surface-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --text: #1d1d1f;
+  /* Raised from #6e6e73 so muted copy clears AA on chip/hover surfaces (~4.45 → ≥4.5). */
+  --text-secondary: #5c5c61;
+  --text-disabled: #aeaeb2;
+  --text-faint: #8e8e93;
+  --hover: rgba(0, 0, 0, 0.06);
+  --code-bg: rgba(0, 0, 0, 0.045);
+  --shimmer: rgba(0, 0, 0, 0.07);
+  /* Brand tint for large glyphs; --link is AA body/link text on light surfaces. */
+  --brand: #0a84ff;
+  --link: #0060df;
+  --destructive: #d70015;
+  --success: #1b7f3a;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", "Microsoft YaHei", "Noto Sans CJK SC", system-ui,
+    sans-serif;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+@supports (color: AccentColor) {
+  :root {
+    --brand: AccentColor;
+    --link: color-mix(in srgb, AccentColor 72%, black);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-bg: rgba(40, 40, 44, 0.98);
+    --surface-border: rgba(255, 255, 255, 0.12);
+    --surface-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --text: #f5f5f7;
+    --text-secondary: #a1a1a6;
+    --text-disabled: #636366;
+    --text-faint: #8e8e93;
+    --hover: rgba(255, 255, 255, 0.09);
+    --code-bg: rgba(255, 255, 255, 0.06);
+    --shimmer: rgba(255, 255, 255, 0.09);
+    --brand: #0a84ff;
+    --link: #409cff;
+    --destructive: #ff6961;
+    --success: #30d158;
+  }
+
+  @supports (color: AccentColor) {
+    :root {
+      --brand: AccentColor;
+      --link: color-mix(in srgb, AccentColor 85%, white);
+    }
+  }
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Lightbox window: keep the page fully transparent so only .ocr-lightbox dims. */
+html.ocr-lightbox-page,
+html.ocr-lightbox-page body,
+html.ocr-lightbox-page #root {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.overlay-root {
+  /* absolute: fill the overlay webview / harness sim-window (fixed escapes sim-window in Chrome). */
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  overflow-anchor: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+  color: var(--text);
+}
+
+.stage {
+  position: absolute;
+  /* left/top set in JS from -frame (layout coords, not transform). */
+  left: 0;
+  top: 0;
+}
+
+.surface {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  pointer-events: auto;
+  background: var(--surface-bg);
+  box-shadow:
+    var(--surface-shadow),
+    inset 0 0 0 0.5px var(--surface-border);
+}
+
+/* Overlay: enter/leave only fade; transforming the group moves glyphs during a quick morph. */
+.surface-group {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+/* Spans the stage; clip-path (set per frame to the card's box) shows the content and limits hits to it. */
+.surface-content {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: auto;
+}
+
+.face {
+  position: absolute;
+}
+/* The pinned window's panel fills its card. */
+.face-panel {
+  top: 0;
+  bottom: 0;
+}
+.anchor-left {
+  left: 0;
+}
+
+.bubble-face {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand);
+}
+
+.bar-face {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  padding: 0 4px;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.bar-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.hover-pill {
+  position: absolute;
+  top: 50%;
+  height: 32px;
+  margin-top: -16px;
+  border-radius: var(--radius-pill);
+  background: var(--hover);
+}
+
+.action-title {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* lucide-animated wraps its svg in a div; keep it from adding line-height space around the glyph. */
+.glyph {
+  display: flex;
+  flex: none;
+}
+
+/* Even-sized slots keep SVGs on the same pixel grid before and after the face fade.
+   The slot is independent of locale-specific font metrics and baseline rounding. */
+.bar-button .action-title {
+  height: 32px;
+  line-height: 20px;
+}
+
+.bar-button .glyph {
+  width: 16px;
+  height: 16px;
+}
+
+.bar-button .glyph > svg {
+  display: block;
+}
+
+.measure {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: max-content;
+  height: 40px;
+  visibility: hidden;
+}
+
+.panel-face {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-anchor: none;
+}
+
+/* 固定浮层: shown under the pin button when the limit is hit. Opaque, so text never shows through. */
+.pin-hint {
+  position: absolute;
+  right: 8px;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  background: var(--surface-bg);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 0.5px var(--surface-border);
+  color: var(--text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Pinned panels, and engaged temporary panels, drag from the header. */
+.pinned-root .panel-header,
+.surface-group.engaged .panel-header {
+  cursor: move;
+}
+
+/* Flush so the header drag cursor never peeks between the icons. */
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  cursor: default;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  padding: 0 8px 0 14px;
+}
+
+.panel-title {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.chip {
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--hover);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  cursor: default;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: default;
+}
+.icon-button:hover,
+.icon-button[data-hover],
+.chip:hover,
+.chip[data-hover],
+.chip[data-open] {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.chip-source {
+  color: var(--text-secondary);
+}
+
+/* Target-language picker: one row at the top of the panel body, which grows to fit it. */
+.target-picker {
+  display: flex;
+  gap: 4px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--surface-border);
+}
+.target-option {
+  height: 24px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.target-option:hover,
+.target-option[data-hover] {
+  background: var(--hover);
+  color: var(--text);
+}
+.target-option[data-selected] {
+  background: var(--hover);
+  color: var(--text);
+  font-weight: 600;
+}
+.target-option:focus {
+  outline: none;
+}
+.target-option:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-anchor: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.exchange {
+  margin-bottom: 10px;
+}
+
+/* CONTEXT.md 追问: the user's questions sit on a light block, answers have no background. */
+.question {
+  width: fit-content;
+  max-width: 85%;
+  margin: 4px 0 8px auto;
+  padding: 6px 10px;
+  border-radius: var(--radius-lg);
+  background: var(--hover);
+  font-size: 13.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  scroll-margin-top: 8px;
+}
+
+.panel-footer {
+  display: flex;
+  /* flex-end made the textarea grow upward on any height flash (input-only jump). */
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  box-sizing: border-box;
+  min-height: 44px; /* padding + single-line input — reserve before first focus */
+  padding: 8px 8px 8px 14px;
+  border-top: 1px solid var(--surface-border);
+  overflow-anchor: none;
+}
+
+.follow-up-input {
+  flex: 1;
+  box-sizing: border-box;
+  /* Fixed single-line box until JS grows it for typed text — first focus must not reflow. */
+  height: 28px;
+  min-height: 28px;
+  max-height: 96px;
+  padding: 5px 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 18px;
+  overflow-anchor: none;
+}
+.follow-up-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.icon-button.send,
+.icon-button.is-pinned {
+  color: var(--brand);
+}
+
+.markdown {
+  line-height: 1.6;
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+.markdown > :first-child {
+  margin-top: 0;
+}
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote,
+.markdown .code-block,
+.markdown .table-wrap {
+  margin: 0 0 8px;
+}
+.markdown ul,
+.markdown ol {
+  padding-left: 1.4em;
+}
+.markdown li + li {
+  margin-top: 2px;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  margin: 10px 0 6px;
+  font-size: 1em;
+}
+.markdown blockquote {
+  padding-left: 10px;
+  border-left: 3px solid var(--surface-border);
+  color: var(--text-secondary);
+}
+.markdown a {
+  color: var(--link);
+  text-decoration: none;
+  cursor: pointer;
+}
+.markdown a:hover {
+  text-decoration: underline;
+}
+.markdown hr {
+  border: 0;
+  border-top: 1px solid var(--surface-border);
+}
+.markdown code {
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  background: var(--code-bg);
+  font:
+    0.9em/1.5 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+}
+.markdown .md-image {
+  color: var(--text-secondary);
+}
+.markdown .katex-display {
+  margin: 6px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.code-block {
+  position: relative;
+}
+.code-block pre {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--code-bg);
+  overflow-x: auto;
+}
+.code-block pre code {
+  padding: 0;
+  background: none;
+  font-size: 12px;
+}
+.code-copy {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  background: var(--surface-bg);
+  cursor: pointer;
+}
+/* Mac overlay never activates: CSS :hover is unreliable; data-hover comes from markPanelHover. */
+.code-block:hover .code-copy,
+.code-copy[data-hover] {
+  opacity: 1;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+.table-wrap table {
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.table-wrap th,
+.table-wrap td {
+  padding: 4px 8px;
+  border: 1px solid var(--surface-border);
+  text-align: left;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-type {
+  color: #ad3da4;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: #c41a16;
+}
+.hljs-number,
+.hljs-symbol {
+  color: #1c00cf;
+}
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+  color: #326d74;
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-variable,
+.hljs-built_in {
+  color: #3f6e74;
+}
+.hljs-meta {
+  color: #643820;
+}
+.hljs-deletion {
+  color: #b42318;
+}
+@media (prefers-color-scheme: dark) {
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal,
+  .hljs-type {
+    color: #ff7ab2;
+  }
+  .hljs-string,
+  .hljs-regexp,
+  .hljs-addition {
+    color: #ff8170;
+  }
+  .hljs-number,
+  .hljs-symbol {
+    color: #d9c97c;
+  }
+  .hljs-title,
+  .hljs-title.function_,
+  .hljs-section,
+  .hljs-attr,
+  .hljs-attribute,
+  .hljs-variable,
+  .hljs-built_in {
+    color: #78c2b3;
+  }
+  .hljs-meta {
+    color: #fd8f3f;
+  }
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  color: var(--text-secondary);
+}
+.notice.error {
+  margin-top: 6px;
+  color: var(--destructive);
+}
+.notice.success {
+  margin-top: 6px;
+  color: var(--success);
+}
+.answer-note {
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--hover);
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: default;
+}
+.text-button:hover,
+.text-button[data-hover] {
+  background: var(--shimmer);
+}
+.icon-button:disabled {
+  color: var(--text-disabled);
+  pointer-events: none;
+}
+
+.placeholder {
+  height: 50px;
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(90deg, transparent 0%, var(--surface-bg) 50%, transparent 100%) -200px 0 / 200px 100% no-repeat,
+    linear-gradient(var(--shimmer) 0 0) 0 4px / 92% 10px no-repeat,
+    linear-gradient(var(--shimmer) 0 0) 0 22px / 100% 10px no-repeat,
+    linear-gradient(var(--shimmer) 0 0) 0 40px / 60% 10px no-repeat;
+  animation: shimmer 1.1s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position:
+      calc(100% + 200px) 0,
+      0 4px,
+      0 22px,
+      0 40px;
+  }
+}
+
+.placeholder.is-pulsing {
+  /* Same shimmer; class marks skeleton-reveal loading state. */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .placeholder,
+  .placeholder.is-pulsing {
+    animation: none;
+  }
+}
+
+/* Keyboard focus only (:focus-visible); mouse clicks stay ring-free. */
+.icon-button:focus,
+.chip:focus,
+.text-button:focus,
+.bar-button:focus {
+  outline: none;
+}
+.icon-button:focus-visible,
+.chip:focus-visible,
+.text-button:focus-visible,
+.bar-button:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+.chip,
+.text-button {
+  cursor: pointer;
+}
+
+/* —— On-device OCR picker + source hint —— */
+.ocr-picker {
+  position: fixed;
+  inset: 0;
+  cursor: crosshair;
+  background: rgba(0, 0, 0, 0.35);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.14s cubic-bezier(0.2, 0, 0, 1);
+}
+.ocr-picker,
+.ocr-picker * {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.ocr-picker.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+.ocr-rect {
+  position: absolute;
+  border: 1.5px dashed #fff;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+  background: transparent;
+  pointer-events: none;
+}
+.ocr-rect-label {
+  position: absolute;
+  top: -22px;
+  left: 0;
+  width: max-content;
+  white-space: nowrap;
+  font-size: 11px;
+  color: #fff;
+  background: #111;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.ocr-picker.is-busy {
+  cursor: wait;
+}
+/* Vision ghost boxes: thin stroke + light fill. Opacity stagger is Motion (not CSS
+   @keyframes) so hide→show during capture cannot replay the cascade. */
+.ocr-ghost {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  pointer-events: none;
+}
+/* Status sits under the selection box (not fixed screen %). Fade is Motion. */
+.ocr-status {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10px);
+  transform: translateX(-50%);
+  z-index: 3;
+  font-size: 12px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.ocr-hint {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 4px 8px;
+  border-radius: 6px;
+  max-width: min(420px, calc(100% - 24px));
+}
+.ocr-dismiss {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+  font-size: 12px;
+  color: #111;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ocr-picker {
+    transition: none;
+  }
+}
+.ocr-source {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 100%;
+  margin: 0 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--surface-border);
+}
+.ocr-thumb {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--hover);
+  cursor: zoom-in;
+}
+.ocr-thumb img {
+  display: block;
+  max-width: min(200px, 100%);
+  max-height: 80px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+.ocr-source-text {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Sibling of .overlay-root — outside the clipped content layer / overlay-root overflow. */
+.overlay-lightbox-host {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  pointer-events: none;
+}
+.overlay-lightbox-host > * {
+  pointer-events: auto;
+}
+.ocr-lightbox {
+  /* Own window or portaled host — fills the webview so the dim covers the work area. */
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 5vh 5vw;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(0, 0, 0, 0.55);
+  cursor: zoom-out;
+  pointer-events: auto;
+}
+.ocr-lightbox img {
+  display: block;
+  /* Flex min-size:auto would otherwise keep intrinsic size and spill past the panel. */
+  min-width: 0;
+  min-height: 0;
+  width: auto;
+  height: auto;
+  max-width: min(90vw, 100%);
+  max-height: min(90vh, 100%);
+  object-fit: contain;
+  object-position: center;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  /* No hard white plate — that read as a second panel card next to Explain. */
+  background: transparent;
+  cursor: default;
+}

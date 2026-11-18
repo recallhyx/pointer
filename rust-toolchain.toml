@@ -1,0 +1,6 @@
+[toolchain]
+channel = "1.99.0"
+profile = "minimal"
+components = ["clippy", "rustfmt"]
+# Cross targets are only for `scripts/clippy-cross.sh`; release builds run on native runners.
+targets = ["aarch64-apple-darwin", "x86_64-pc-windows-msvc"]

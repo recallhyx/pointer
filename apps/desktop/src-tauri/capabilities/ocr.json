@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "ocr",
+  "description": "The OCR region picker and the crop lightbox",
+  "windows": ["ocr-picker", "ocr-lightbox"],
+  "permissions": [
+    "allow-ocr-complete",
+    "allow-ocr-present",
+    "allow-ocr-cancel",
+    "allow-ocr-lightbox-peek",
+    "allow-ocr-lightbox-close"
+  ]
+}

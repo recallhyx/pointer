@@ -1,0 +1,158 @@
+.harness {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #dfe3ea;
+  color: #1d1d1f;
+}
+
+@media (prefers-color-scheme: dark) {
+  .harness {
+    background: #15171b;
+    color: #f5f5f7;
+  }
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: none;
+  height: 44px;
+  padding: 0 16px;
+  background: rgba(127, 127, 127, 0.12);
+  border-bottom: 1px solid rgba(127, 127, 127, 0.25);
+  white-space: nowrap;
+}
+
+.toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.settings-link {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.stats {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.desktop {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.app-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-window {
+    background: #1f2125;
+  }
+}
+
+.app-window.browser {
+  left: 40px;
+  top: 28px;
+  width: min(760px, calc(100% - 380px));
+  bottom: 28px;
+}
+
+.app-window.notes {
+  right: 12px;
+  bottom: 12px;
+  width: 300px;
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 36px;
+  padding: 0 12px;
+  flex: none;
+  background: rgba(127, 127, 127, 0.1);
+  border-bottom: 1px solid rgba(127, 127, 127, 0.18);
+  user-select: none;
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(127, 127, 127, 0.35);
+}
+
+.address {
+  flex: 1;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(127, 127, 127, 0.12);
+  color: var(--text-secondary);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.page {
+  padding: 8px 28px 20px;
+  overflow: auto;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.page pre {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: rgba(127, 127, 127, 0.1);
+  font-size: 13px;
+}
+
+.sim-window {
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sim-window.outlined {
+  outline: 1px dashed rgba(255, 59, 48, 0.8);
+}
+
+.sim-hit {
+  position: absolute;
+  pointer-events: none;
+  outline: 1px dotted rgba(52, 199, 89, 0.9);
+}
+
+/* OCR lightbox covers the simulated desktop, not the tiny overlay sim-window. */
+#ocr-lightbox-screen-host {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  pointer-events: none;
+}
+#ocr-lightbox-screen-host > * {
+  pointer-events: auto;
+}
+#ocr-lightbox-screen-host .ocr-lightbox {
+  position: absolute;
+}

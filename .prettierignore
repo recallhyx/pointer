@@ -1,0 +1,6 @@
+pnpm-lock.yaml
+target/
+dist/
+apps/desktop/src-tauri/gen/
+# Docs are hand-aligned Chinese prose and tables.
+*.md

@@ -1,0 +1,16 @@
+<!-- App icon: the bubble as it looks in the light theme. A selected word (pale blue highlight) and the
+     dot that pops up at its lower right, on a light tile with a faint rim so it holds its edge on a
+     white background. A gap is cut around the dot so the two shapes stay apart at 16px. Same glyph
+     and colours as `src/components/animated-icons/mark.tsx` on the overlay surface. macOS grid: 824px
+     rounded square in the 1024 canvas. Regenerate the bundle icons with `pnpm tauri icon src-tauri/icons/source.svg`. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <mask id="cut">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <circle cx="632" cy="608" r="150" fill="#000"/>
+    </mask>
+  </defs>
+  <rect x="104" y="104" width="816" height="816" rx="181" fill="#fcfcfd" stroke="#000" stroke-opacity="0.1" stroke-width="8"/>
+  <rect x="260" y="344" width="420" height="228" rx="66" fill="#aed6fe" mask="url(#cut)"/>
+  <circle cx="632" cy="608" r="102" fill="#0a84ff"/>
+</svg>

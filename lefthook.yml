@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: prettier
+      glob: "*.{js,mjs,ts,tsx,json,css,html,yml,yaml}"
+      run: pnpm exec prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+    - name: eslint
+      glob: "*.{js,mjs,ts,tsx}"
+      run: pnpm exec eslint --no-warn-ignored {staged_files}
+    - name: rustfmt
+      glob: "*.rs"
+      run: rustfmt {staged_files}
+      stage_fixed: true

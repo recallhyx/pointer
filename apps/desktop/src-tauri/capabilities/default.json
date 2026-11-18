@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What every window needs: events, window basics and reading the settings file",
+  "windows": ["overlay", "settings", "ocr-picker", "ocr-lightbox", "pinned-*"],
+  "permissions": ["core:default", "store:default"]
+}

@@ -1,0 +1,65 @@
+[package]
+name = "pointer"
+version = "0.0.0"
+description = "点拨 / Pointer"
+edition = "2021"
+rust-version = "1.90"
+publish = false
+
+[build-dependencies]
+tauri-build = { version = "2.5", features = [] }
+
+[dependencies]
+tauri = { version = "2.12", features = ["macos-private-api", "tray-icon", "image-png"] }
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-http = "2"
+tauri-plugin-store = "2"
+keyring = { version = "3", features = ["apple-native", "windows-native", "linux-native"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+url = "2"
+percent-encoding = "2"
+tauri-plugin-autostart = "2"
+sys-locale = "0.3"
+base64 = "0.22"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+tauri-nspanel = "2.1"
+core-foundation = "0.10"
+objc2 = { version = "0.6", features = ["exception"] }
+objc2-app-kit = "0.3"
+objc2-foundation = "0.3"
+# Vision OCR (VNRecognizeTextRequest). default-features off to keep the Workers/desktop link lean.
+objc2-vision = { version = "0.3", default-features = false, features = [
+  "std",
+  "VNRecognizeTextRequest",
+  "VNRequest",
+  "VNRequestHandler",
+  "VNObservation",
+  "VNTypes",
+  # CGRect / boundingBox on VNDetectedObjectObservation (type ships under VNObservation)
+  "objc2-core-foundation",
+] }
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Dwm",
+  "Win32_Graphics_Gdi",
+  "Win32_System_Com",
+  "Win32_System_DataExchange",
+  "Win32_System_LibraryLoader",
+  "Win32_System_Memory",
+  "Win32_System_Ole",
+  "Win32_System_Threading",
+  "Win32_System_Variant",
+  "Win32_UI_Accessibility",
+  "Win32_UI_HiDpi",
+  "Win32_UI_Input_KeyboardAndMouse",
+  "Win32_UI_WindowsAndMessaging",
+] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+arboard = { version = "3", default-features = false }

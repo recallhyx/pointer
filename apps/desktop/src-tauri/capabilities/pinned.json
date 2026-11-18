@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "pinned",
+  "description": "Pinned panels: commands act on the window that sends them",
+  "windows": ["pinned-*"],
+  "permissions": [
+    "allow-pin-init",
+    "allow-pin-show",
+    "allow-pin-painted",
+    "allow-pin-resize",
+    "allow-pin-drag",
+    "allow-pin-engage",
+    "allow-pin-close",
+    "allow-pin-set-fixed"
+  ]
+}
